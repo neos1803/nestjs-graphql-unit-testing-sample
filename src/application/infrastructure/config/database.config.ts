@@ -1,7 +1,6 @@
 import { Module } from "@nestjs/common"
 import { ConfigModule, ConfigService } from "@nestjs/config"
 import { TypeOrmModule, TypeOrmModuleOptions } from "@nestjs/typeorm"
-import { AgamaEntity } from "src/entities/agama.entity"
 
 const dbConfig = (env: ConfigService): TypeOrmModuleOptions => {
   return {
@@ -12,10 +11,10 @@ const dbConfig = (env: ConfigService): TypeOrmModuleOptions => {
     password: env.get<string>('TYPEORM_PASSWORD'),
     username: env.get<string>('TYPEORM_USERNAME'),
     entities: [
-      AgamaEntity
+      "dist/entities/*.js"
     ],
     migrations: [
-      'dist/resources/migrations/*.ts'
+      'dist/resources/migrations/*.js'
     ],
     "cli": {
       "migrationsDir": 'src/resources/migrations'
@@ -32,9 +31,7 @@ const dbConfig = (env: ConfigService): TypeOrmModuleOptions => {
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       imports: [ConfigModule],
-      useFactory: async (config: ConfigService) => {
-        return dbConfig(config)
-      }
+      useFactory: (config: ConfigService) => dbConfig(config)
     })
   ]
 })
